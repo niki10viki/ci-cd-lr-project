@@ -1,70 +1,32 @@
-name: Release and Update Docs Fix
+name: Release
 
 on:
   push:
     branches:
       - main
 
-permissions:
-  contents: write
-
 jobs:
   release:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+      pull-requests: write
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v4
 
-      - name: Get Chuck Norris Joke
-        id: joke
+      - name: Generate version
         run: |
-          JOKE=$(curl -s https://api.chucknorris.io/jokes/random | jq -r '.value')
-          echo "joke=$JOKE" >> "$GITHUB_OUTPUT"
-
-      - name: Determine Version & PR Title
-        id: info
-        run: |
-          VERSION="v1.0.${{ github.run_number }}"
-          PR_TITLE=$(git log -1 --pretty=%B | head -n 1)
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "pr_title=$PR_TITLE" >> "$GITHUB_OUTPUT"
-
-      - name: Update README.md
-        run: |
-          VERSION="${{ steps.info.outputs.version }}"
-          PR_TITLE="${{ steps.info.outputs.pr_title }}"
-          JOKE="${{ steps.joke.outputs.joke }}"
-          
-          sed -i '/<!-- RELEASE_INFO -->/q' README.md
-          
-          echo "" >> README.md
-          echo "## Latest Release Info" >> README.md
-          echo "- **Version:** $VERSION" >> README.md
-          echo "- **Last Update:** $PR_TITLE" >> README.md
-          echo "- **Chuck Norris Joke:** $JOKE" >> README.md
-
-      - name: Commit & Push README
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add README.md
-          git commit -m "docs: update release info [skip ci]" || echo "No changes to commit"
-          git push
+          echo "VERSION=v1.0.${{ github.run_number }}" >> $GITHUB_ENV
 
       - name: Create Tag
         run: |
-          git tag ${{ steps.info.outputs.version }}
-          git push origin ${{ steps.info.outputs.version }}
+          git tag $VERSION
+          git push origin $VERSION
 
-      - name: Create GitHub Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create ${{ steps.info.outputs.version }} \
-            --title "Release ${{ steps.info.outputs.version }}" \
-            --notes "### Changes: ${{ steps.info.outputs.pr_title }}
-            
-            **Random Chuck Norris Joke:** _${{ steps.joke.outputs.joke }}_"
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.VERSION }}
+          name: Release ${{ env.VERSION }}

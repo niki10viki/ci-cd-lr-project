@@ -88,6 +88,6 @@ export default defineConfig([
 <!-- RELEASE_INFO -->
 
 ## Latest Release Info
-- **Version:** v1.0.4
-- **Last Update:** Force run release script
-- **Chuck Norris Joke:** When Chuck Norris cuts onions, the onions cry!
+- **Version:** v1.0.5
+- **Last Update:** Debug build path
+- **Chuck Norris Joke:** Chuck Norris can enrich uranium in his popcorn maker.
