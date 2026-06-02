@@ -38,7 +38,7 @@ jobs:
           PR_TITLE="${{ steps.info.outputs.pr_title }}"
           JOKE="${{ steps.joke.outputs.joke }}"
           
-          sed -i '//q' README.md
+          sed -i '/<!-- RELEASE_INFO -->/q' README.md
           
           echo "" >> README.md
           echo "## Latest Release Info" >> README.md
