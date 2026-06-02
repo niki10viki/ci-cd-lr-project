@@ -76,18 +76,10 @@ export default defineConfig([
 
 
 
-
-
-
-
 ## Latest Release Info
-- Version: v1.0.7
-- PR Title: Manual push to main
-- Chuck Norris Joke: A mere slap in your face from Chuck Norris causes permanent, life long strabismus.
+
+- Version:
+- PR Title:
+- Chuck Norris Joke:
 
 <!-- RELEASE_INFO -->
-
-## Latest Release Info
-- **Version:** v1.0.5
-- **Last Update:** Debug build path
-- **Chuck Norris Joke:** Chuck Norris can enrich uranium in his popcorn maker.
