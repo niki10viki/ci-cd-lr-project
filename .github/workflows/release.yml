@@ -11,17 +11,29 @@ jobs:
 
     permissions:
       contents: write
-      pull-requests: write
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Generate version
         run: |
           echo "VERSION=v1.0.${{ github.run_number }}" >> $GITHUB_ENV
 
-      - name: Create Tag
+      - name: Install jq
+        run: sudo apt-get install jq -y
+
+      - name: Get Chuck Norris Joke
+        id: joke
         run: |
+          JOKE=$(curl -s https://api.chucknorris.io/jokes/random | jq -r '.value')
+          echo "joke=$JOKE" >> $GITHUB_OUTPUT
+
+      - name: Create Git Tag
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
           git tag $VERSION
           git push origin $VERSION
 
@@ -30,3 +42,30 @@ jobs:
         with:
           tag_name: ${{ env.VERSION }}
           name: Release ${{ env.VERSION }}
+          body: |
+            🚀 Version: ${{ env.VERSION }}
+
+            😂 Chuck Norris Joke:
+            ${{ steps.joke.outputs.joke }}
+
+      - name: Update README
+        run: |
+          JOKE="${{ steps.joke.outputs.joke }}"
+
+          cat > README.md << EOF
+# Project Info
+
+## Latest Release Info
+
+- Version: $VERSION
+- Chuck Norris Joke: $JOKE
+EOF
+
+      - name: Commit README changes
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+          git add README.md
+          git commit -m "Update README [skip ci]" || echo "No changes"
+          git push
