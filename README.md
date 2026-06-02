@@ -86,3 +86,8 @@ export default defineConfig([
 - Chuck Norris Joke: A mere slap in your face from Chuck Norris causes permanent, life long strabismus.
 
 <!-- RELEASE_INFO -->
+
+## Latest Release Info
+- **Version:** v1.0.4
+- **Last Update:** Force run release script
+- **Chuck Norris Joke:** When Chuck Norris cuts onions, the onions cry!
